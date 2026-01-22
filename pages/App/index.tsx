@@ -1,74 +1,49 @@
 'use client'
-import { bitable, ITableMeta } from "@lark-base-open/js-sdk";
-import { Button, Form } from '@douyinfe/semi-ui';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { BaseFormApi } from '@douyinfe/semi-foundation/lib/es/form/interface';
+
+import { Tabs, Typography } from '@douyinfe/semi-ui';
 import styles from './index.module.css';
 
-export default function App() {
-  const [tableMetaList, setTableMetaList] = useState<ITableMeta[]>();
-  const formApi = useRef<BaseFormApi>();
-  const addRecord = useCallback(async ({ table: tableId }: { table: string }) => {
-    if (tableId) {
-      const table = await bitable.base.getTableById(tableId);
-      table.addRecord({
-        fields: {},
-      });
-    }
-  }, []);
-  useEffect(() => {
-    Promise.all([bitable.base.getTableMetaList(), bitable.base.getSelection()])
-      .then(([metaList, selection]) => {
-        setTableMetaList(metaList);
-        formApi.current?.setValues({ table: selection.tableId });
-      });
-  }, []);
+import AccountManagement from './components/AccountManagement';
+import VideoManagement from './components/VideoManagement';
+import MaterialPublish from './components/MaterialPublish';
+import AIGenerate from './components/AIGenerate';
+import SocialMediaFetch from './components/SocialMediaFetch';
 
+const { Title, Text } = Typography;
+
+export default function App() {
   return (
     <main className={styles.main}>
-      <h4 className={styles.h4}>
-        Edit <code className={styles.code}>src/App.tsx</code> and save to reload
-      </h4>
-      <Form labelPosition='top' onSubmit={addRecord} getFormApi={(baseFormApi: BaseFormApi) => formApi.current = baseFormApi}>
-        <Form.Slot label="Development guide">
-          <div>
-            <a href="https://lark-technologies.larksuite.com/docx/HvCbdSzXNowzMmxWgXsuB2Ngs7d" target="_blank"
-              rel="noopener noreferrer">
-              Base Extensions Guide
-            </a>
-            、
-            <a href="https://bytedance.feishu.cn/docx/HazFdSHH9ofRGKx8424cwzLlnZc" target="_blank"
-              rel="noopener noreferrer">
-              多维表格插件开发指南
-            </a>
+      <div style={{ marginBottom: 16 }}>
+        <Title heading={4} style={{ marginBottom: 4 }}>
+          TikTok 运营助手
+        </Title>
+        <Text type="tertiary">
+          专业的 TikTok 账号运营管理工具，提供账号管理、视频数据分析、素材发布、AI视频生成、社媒数据获取等一站式运营解决方案。
+        </Text>
           </div>
-        </Form.Slot>
-        <Form.Slot label="API">
-          <div>
-            <a href="https://lark-technologies.larksuite.com/docx/Y6IcdywRXoTYSOxKwWvuLK09sFe" target="_blank"
-              rel="noopener noreferrer">
-              Base Extensions Front-end API
-            </a>
-            、
-            <a href="https://bytedance.feishu.cn/docx/HjCEd1sPzoVnxIxF3LrcKnepnUf" target="_blank"
-              rel="noopener noreferrer">
-              多维表格插件API
-            </a>
-          </div>
-        </Form.Slot>
-        <Form.Select field='table' label='Select Table' placeholder="Please select a Table" style={{ width: '100%' }}>
-          {
-            Array.isArray(tableMetaList) && tableMetaList.map(({ name, id }) => {
-              return (
-                <Form.Select.Option key={id} value={id}>
-                  {name}
-                </Form.Select.Option>
-              );
-            })
-          }
-        </Form.Select>
-        <Button theme='solid' htmlType='submit'>Add Record</Button>
-      </Form>
+
+      <Tabs type="line" defaultActiveKey="account">
+        <Tabs.TabPane tab="账号管理" itemKey="account">
+          <AccountManagement />
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="视频列表" itemKey="video">
+          <VideoManagement />
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="素材发布" itemKey="material">
+          <MaterialPublish />
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="AI生成" itemKey="ai">
+          <AIGenerate />
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="社媒获取" itemKey="social">
+          <SocialMediaFetch />
+        </Tabs.TabPane>
+      </Tabs>
     </main>
-  )
+  );
 }
